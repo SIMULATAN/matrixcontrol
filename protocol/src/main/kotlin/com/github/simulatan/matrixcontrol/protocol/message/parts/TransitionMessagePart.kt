@@ -1,0 +1,36 @@
+package com.github.simulatan.matrixcontrol.protocol.message.parts
+
+import com.github.simulatan.matrixcontrol.protocol.message.MessagePart
+
+enum class TransitionMessagePart : MessagePart {
+	ZYKLISCH,
+	STILLSTEHEND,
+	VON_RECHTS_OEFFNEN,
+	VON_LINKS_OEFFNEN,
+	VON_MITTE_OEFFNEN,
+	VON_MITTE_OEFFNEN2,
+	VON_MITTE_UEBERDECKEN,
+	VON_RECHTS_UEBERDECKEN,
+	VON_LINKS_UEBERDECKEN,
+	ZUR_MITTE_UEBERDECKEN,
+	BILDLAUF_NACH_OBEN,
+	BILDLAUF_NACH_UNTEN,
+	ZEILENSPRUNG_ZUR_MITTE,
+	ZEILENSPRUNGBEDECKUNG,
+	VON_UNTEN_UEBERDECKEN,
+	VON_OBEN_UEBERDECKEN,
+	ABTASTLINIE,
+	EXPLODIEREN,
+	PAC_MAN,
+	FALLENLASSEN_UND_STAPELN,
+	SCHIESSEN,
+	BLITZ,
+	ZUFALL,
+	HINEINGLEITEN,
+	TEXT_STAUCHEN;
+
+	override fun toByteArray(): UByteArray {
+		// transitions are the decimal values 1-25, represented as one byte
+		return ubyteArrayOf((ordinal + 1).toUByte())
+	}
+}
