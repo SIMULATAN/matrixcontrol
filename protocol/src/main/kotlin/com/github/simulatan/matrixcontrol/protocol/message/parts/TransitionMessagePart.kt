@@ -1,6 +1,7 @@
 package com.github.simulatan.matrixcontrol.protocol.message.parts
 
 import com.github.simulatan.matrixcontrol.protocol.message.MessagePart
+import java.util.*
 
 enum class TransitionMessagePart : MessagePart {
 	ZYKLISCH,
@@ -21,9 +22,9 @@ enum class TransitionMessagePart : MessagePart {
 	VON_OBEN_UEBERDECKEN,
 	ABTASTLINIE,
 	EXPLODIEREN,
-	PAC_MAN,
+	PAC_MAN("Pac Man"),
 	FALLENLASSEN_UND_STAPELN,
-	SCHIESSEN,
+	SCHIESSEN("Schießen"),
 	BLITZ,
 	ZUFALL,
 	HINEINGLEITEN,
@@ -32,5 +33,21 @@ enum class TransitionMessagePart : MessagePart {
 	override fun toByteArray(): UByteArray {
 		// transitions are the decimal values 1-25, represented as one byte
 		return ubyteArrayOf((ordinal + 1).toUByte())
+	}
+
+	val fancyName: String
+
+	constructor() {
+		this.fancyName = name
+			.lowercase(Locale.ROOT)
+			.replace("_", " ")
+			.replace("ue", "ü")
+			.replace("ae", "ä")
+			.replace("oe", "ö")
+			.replaceFirstChar { it.uppercase(Locale.ROOT) }
+	}
+
+	constructor(fancyName: String) {
+		this.fancyName = fancyName
 	}
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- to be replaced with SSL stuff in prod maybe -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- IP of host in emulator -->
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>
