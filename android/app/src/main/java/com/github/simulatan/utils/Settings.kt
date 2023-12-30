@@ -14,6 +14,11 @@ interface AppPreferences {
 	var serialPort: String
 }
 
+object MockSettings : AppPreferences {
+	override var server: String = "http://localhost:7070"
+	override var serialPort: String = "/dev/ttyUSB0"
+}
+
 internal class AppPreferencesImpl(context: Context) : AppPreferences {
 	private val dataStore = context.dataStore
 

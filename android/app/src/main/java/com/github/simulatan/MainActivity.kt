@@ -8,21 +8,28 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.github.simulatan.ui.components.ControlComponent
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.github.simulatan.ui.components.CustomAppBar
+import com.github.simulatan.ui.pages.ControlPage
+import com.github.simulatan.ui.pages.Page
+import com.github.simulatan.ui.pages.SettingsPage
+import com.github.simulatan.ui.pages.TransitionSelectPage
 import com.github.simulatan.ui.theme.MatrixcontrolTheme
 import com.github.simulatan.utils.AppPreferences
 import com.github.simulatan.utils.AppPreferencesImpl
+import com.github.simulatan.utils.plus
 
 
 class MainActivity : ComponentActivity() {
@@ -43,27 +50,44 @@ class MainActivity : ComponentActivity() {
 					modifier = Modifier.fillMaxSize(),
 					color = MaterialTheme.colorScheme.background
 				) {
-					MainComponent(AppPreferencesImpl(baseContext))
+					val appPreferences = AppPreferencesImpl(baseContext)
+					MainComponent(appPreferences = appPreferences)
 				}
 			}
 		}
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainComponent(appPreferences: AppPreferences) = Scaffold(
-	topBar = {
-		TopAppBar(title = { Text("MatrixControl") })
-	}
-) { innerPadding ->
-	Column(
-		verticalArrangement = Arrangement.Center,
-		horizontalAlignment = Alignment.CenterHorizontally,
-		modifier = Modifier.padding(innerPadding).fillMaxSize()
-	) {
-		Column(modifier = Modifier.padding(8.dp)) {
-			ControlComponent(appPreferences)
+fun MainComponent(appPreferences: AppPreferences) {
+	val navController = rememberNavController()
+	val backStackEntry by navController.currentBackStackEntryAsState()
+
+	val currentScreen = Page.valueOf(backStackEntry?.destination?.route ?: Page.CONTROL.name)
+
+	Scaffold(
+		topBar = {
+			CustomAppBar(
+				currentScreen = currentScreen,
+				navController = navController
+			)
+		}
+	) { innerPadding ->
+		Column(
+			verticalArrangement = Arrangement.Center,
+			horizontalAlignment = Alignment.CenterHorizontally,
+			modifier = Modifier
+				.padding(innerPadding + 8.dp)
+				.fillMaxSize()
+		) {
+			NavHost(
+				navController = navController,
+				startDestination = Page.CONTROL.name
+			) {
+				composable(Page.CONTROL.name) { ControlPage(appPreferences, navController) }
+				composable(Page.TRANSITION_SELECT.name) { TransitionSelectPage() }
+				composable(Page.SETTINGS.name) { SettingsPage(appPreferences, navController) }
+			}
 		}
 	}
 }
