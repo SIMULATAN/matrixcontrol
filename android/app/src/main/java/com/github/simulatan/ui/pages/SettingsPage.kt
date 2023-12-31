@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.github.simulatan.ui.components.SwitchWithLabel
 import com.github.simulatan.utils.AppPreferences
 import com.github.simulatan.utils.MockSettings
 
@@ -42,9 +43,18 @@ fun SettingsPage(settings: AppPreferences, navController: NavController) {
 			label = { Text("Serial Port") }
 		)
 
+		var tabletMode by remember { mutableStateOf(settings.tabletMode) }
+		SwitchWithLabel(
+			"Tablet Mode",
+			checked = tabletMode,
+			onCheckedChange = { tabletMode = it },
+			modifier = Modifier.fillMaxWidth()
+		)
+
 		Button(modifier = Modifier.fillMaxWidth(), onClick = {
 			settings.server = server
 			settings.serialPort = serialPort
+			settings.tabletMode = tabletMode
 			navController.navigateUp()
 		}) {
 			Text("Save")
@@ -52,6 +62,6 @@ fun SettingsPage(settings: AppPreferences, navController: NavController) {
 	}
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun SettingsPagePreview() = SettingsPage(settings = MockSettings, navController = rememberNavController())
