@@ -120,7 +120,7 @@ private fun ChildComponent(
 				onValueChange = {},
 				readOnly = true,
 				trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = false) },
-				modifier = Modifier.fillMaxWidth()
+				modifier = Modifier.menuAnchor().fillMaxWidth()
 			)
 
 			ExposedDropdownMenu(

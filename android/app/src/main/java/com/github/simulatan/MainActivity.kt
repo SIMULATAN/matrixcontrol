@@ -31,7 +31,10 @@ import com.github.simulatan.ui.pages.TransitionSelectPage
 import com.github.simulatan.ui.theme.MatrixcontrolTheme
 import com.github.simulatan.utils.AppPreferences
 import com.github.simulatan.utils.AppPreferencesImpl
+import com.github.simulatan.utils.MockSettings
 import com.github.simulatan.utils.plus
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 class MainActivity : ComponentActivity() {
@@ -42,10 +45,23 @@ class MainActivity : ComponentActivity() {
 		}
 	}
 
+	var messages = mutableStateListOf(MessageRow.SAMPLE)
+
+	override fun onSaveInstanceState(outState: Bundle) {
+		super.onSaveInstanceState(outState)
+		outState.putString("currentMessages", Json.encodeToString(messages.toList()))
+	}
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		// pretty ass kotlin code :)
+		messages = mutableStateListOf(*(savedInstanceState?.getString("currentMessages")?.let {
+			Json.decodeFromString<List<MessageRow>>(it)
+		}?.toTypedArray() ?: arrayOf(MessageRow.SAMPLE)))
 
 		setContent {
+			val messages: Messages = remember { messages }
+
 			MatrixcontrolTheme {
 				// A surface container using the 'background' color from the theme
 				Surface(
@@ -53,7 +69,7 @@ class MainActivity : ComponentActivity() {
 					color = MaterialTheme.colorScheme.background
 				) {
 					val appPreferences = AppPreferencesImpl(baseContext)
-					MainComponent(appPreferences = appPreferences)
+					MainComponent(appPreferences = appPreferences, messages = messages)
 				}
 			}
 		}
@@ -61,13 +77,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainComponent(appPreferences: AppPreferences) {
+fun MainComponent(appPreferences: AppPreferences, messages: Messages) {
 	val navController = rememberNavController()
 	val backStackEntry by navController.currentBackStackEntryAsState()
 
 	val currentScreen = Page.parse(backStackEntry?.destination?.route ?: Page.CONTROL.name)
-
-	val messages: Messages = remember { mutableStateListOf(MessageRow.SAMPLE) }
 
 	Scaffold(
 		topBar = {
@@ -118,9 +132,6 @@ fun MainComponent(appPreferences: AppPreferences) {
 @Composable
 fun MainPreview() {
 	MatrixcontrolTheme {
-		MainComponent(object : AppPreferences {
-			override var server = "http://localhost:7070"
-			override var serialPort = "/dev/ttyUSB0"
-		})
+		MainComponent(MockSettings.copy(tabletMode = true), mutableListOf(MessageRow.SAMPLE))
 	}
 }
