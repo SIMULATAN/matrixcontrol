@@ -1,16 +1,12 @@
 package com.github.simulatan.ui.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
@@ -57,40 +53,23 @@ fun MessageRowEditComponent(
 			settings,
 			navController,
 			index,
-			rowEditCallback,
-			baseModifier
+			rowEditCallback
 		)
 	}
 
-	if (settings.tabletMode) {
-		Row(
-			verticalAlignment = Alignment.CenterVertically
-		) {
+	Row(
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(10.dp),
+		modifier = Modifier.fillMaxWidth()
+	) {
+		if (settings.tabletMode) {
+			DeleteComponent(index, rowEditCallback)
 			content(Modifier)
+		} else {
 			DeleteComponent(index, rowEditCallback)
-		}
-	} else {
-		// IntrinsicSize.Max makes the box as wide as it COULD be
-		// this is WITH the delete icon
-		Row(
-			verticalAlignment = Alignment.CenterVertically,
-			modifier = Modifier.requiredWidth(IntrinsicSize.Max)
-		) {
 			Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-				content(
-					if (index > 0) {
-						Modifier.requiredWidth(IntrinsicSize.Min)
-					} else {
-						// there's no delete button => we fill the space of the spacer too
-						Modifier.fillMaxWidth()
-					}
-				)
+				content(Modifier)
 			}
-			// the spacer emulates the icon
-			if (index == 0) {
-				Spacer(modifier = Modifier.width(48.dp))
-			}
-			DeleteComponent(index, rowEditCallback)
 		}
 	}
 }
@@ -114,8 +93,7 @@ private fun ChildComponent(
 	settings: AppPreferences,
 	navController: NavController,
 	index: Int,
-	rowEditCallback: (MessageRow?) -> Unit,
-	@SuppressLint("ModifierParameter") baseModifier: Modifier
+	rowEditCallback: (MessageRow?) -> Unit
 ) {
 	var text by remember {
 		mutableStateOf(row.text)
@@ -124,7 +102,8 @@ private fun ChildComponent(
 	if (settings.tabletMode) {
 		Button(
 			onClick = { navController.navigate(Page.TRANSITION_SELECT, index) },
-			modifier = baseModifier
+			// make the button the same height as the parent
+			modifier = Modifier.height(IntrinsicSize.Min)
 		) {
 			Text(text = row.transition.fancyName)
 			Icon(
@@ -132,7 +111,6 @@ private fun ChildComponent(
 				contentDescription = "change transition",
 			)
 		}
-		Spacer(Modifier.width(5.dp))
 	} else {
 		var expanded by remember { mutableStateOf(false) }
 
@@ -142,8 +120,7 @@ private fun ChildComponent(
 				onValueChange = {},
 				readOnly = true,
 				trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = false) },
-				// makes the field use as little space as possible
-				modifier = baseModifier.menuAnchor().widthIn(min = 1.dp),
+				modifier = Modifier.fillMaxWidth()
 			)
 
 			ExposedDropdownMenu(
@@ -163,20 +140,14 @@ private fun ChildComponent(
 		}
 	}
 
-	val fieldModifier = if (index > 0) {
-		baseModifier.widthIn(min = 200.dp, max = 400.dp)
-	} else {
-		baseModifier.width(IntrinsicSize.Min)
-	}
 	TextField(
 		value = text,
 		onValueChange = { text = it; rowEditCallback(row.copy(text = it)) },
 		label = { Text("Text") },
-		modifier = fieldModifier,
+		modifier = Modifier.fillMaxWidth(),
 		singleLine = true
 	)
 }
-
 
 
 data class PreviewParams(val rows: Int, val tabletMode: Boolean)
