@@ -13,6 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,7 +65,9 @@ fun MainComponent(appPreferences: AppPreferences) {
 	val navController = rememberNavController()
 	val backStackEntry by navController.currentBackStackEntryAsState()
 
-	val currentScreen = Page.valueOf(backStackEntry?.destination?.route ?: Page.CONTROL.name)
+	val currentScreen = Page.parse(backStackEntry?.destination?.route ?: Page.CONTROL.name)
+
+	val messages: Messages = remember { mutableStateListOf(MessageRow.SAMPLE) }
 
 	Scaffold(
 		topBar = {
@@ -84,9 +88,22 @@ fun MainComponent(appPreferences: AppPreferences) {
 				navController = navController,
 				startDestination = Page.CONTROL.name
 			) {
-				composable(Page.CONTROL.name) { ControlPage(appPreferences, navController) }
-				composable(Page.TRANSITION_SELECT.name) { TransitionSelectPage() }
-				composable(Page.SETTINGS.name) { SettingsPage(appPreferences, navController) }
+				composable(Page.CONTROL.name) {
+					ControlPage(appPreferences, navController, messages)
+				}
+				composable(
+					Page.TRANSITION_SELECT.route,
+					arguments = Page.TRANSITION_SELECT.arguments
+				) {
+					TransitionSelectPage(
+						navController,
+						messages,
+						it.arguments?.getInt(Page.TRANSITION_SELECT.arguments.first().name)!!
+					)
+				}
+				composable(Page.SETTINGS.name) {
+					SettingsPage(appPreferences, navController)
+				}
 			}
 		}
 	}

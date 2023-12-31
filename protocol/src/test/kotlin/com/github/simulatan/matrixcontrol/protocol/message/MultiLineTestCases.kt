@@ -10,7 +10,7 @@ class MultiLineTestCases {
 	fun `#6 two lines`() {
 		val message = MessageBuilder(
 			PlainTextMessagePart("First Line"),
-			NewlineMessagePart(),
+			NewlineMessagePart,
 			PlainTextMessagePart("Second Line")
 		).build()
 		// Start of line + "First Line" + Newline + Message Terminator + Start of line + "Second Line" + Newline + Message Terminator
@@ -24,9 +24,9 @@ class MultiLineTestCases {
 	fun `#8 three lines`() {
 		val message = MessageBuilder(
 			PlainTextMessagePart("First Line"),
-			NewlineMessagePart(),
+			NewlineMessagePart,
 			PlainTextMessagePart("Second Line"),
-			NewlineMessagePart(),
+			NewlineMessagePart,
 			PlainTextMessagePart("Third Line")
 		).build()
 		// Start of line + "First Line" + Newline + Message Terminator + Start of line + "Second Line" + Newline + Message Terminator + Start of line + "Third Line" + Newline + Message Terminator

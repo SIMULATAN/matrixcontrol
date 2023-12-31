@@ -20,3 +20,6 @@ operator fun PaddingValues.plus(other: PaddingValues): PaddingValues = PaddingVa
 )
 
 fun NavController.navigate(page: Page) = navigate(page.name)
+
+fun NavController.navigate(page: Page, vararg parameters: Any)
+	= navigate(page.routeParams(*parameters))

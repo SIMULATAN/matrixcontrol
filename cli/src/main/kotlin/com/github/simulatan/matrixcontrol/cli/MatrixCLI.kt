@@ -41,7 +41,7 @@ fun main() {
 			input.matches("\\[([a-zA-Z_]+)\\]".toRegex()) ->
 				TransitionMessagePart.valueOf(input.replace("[", "").replace("]", ""))
 
-			input == "\n" || input == "\\n" -> NewlineMessagePart()
+			input == "\n" || input == "\\n" -> NewlineMessagePart
 
 			else -> PlainTextMessagePart(input)
 		}

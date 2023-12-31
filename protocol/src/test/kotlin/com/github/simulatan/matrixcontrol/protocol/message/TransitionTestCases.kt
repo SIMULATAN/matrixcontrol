@@ -12,7 +12,7 @@ class TransitionTestCases {
 		val message = MessageBuilder(
 			TransitionMessagePart.PAC_MAN,
 			PlainTextMessagePart("First Line"),
-			NewlineMessagePart(),
+			NewlineMessagePart,
 			TransitionMessagePart.PAC_MAN,
 			PlainTextMessagePart("Second Line")
 		).build()
@@ -28,10 +28,10 @@ class TransitionTestCases {
 		val message = MessageBuilder(
 			TransitionMessagePart.PAC_MAN,
 			PlainTextMessagePart("First Line"),
-			NewlineMessagePart(),
+			NewlineMessagePart,
 			TransitionMessagePart.PAC_MAN,
 			PlainTextMessagePart("Second Line"),
-			NewlineMessagePart(),
+			NewlineMessagePart,
 			TransitionMessagePart.PAC_MAN,
 			PlainTextMessagePart("Third Line")
 		).build()
