@@ -1,6 +1,5 @@
 package com.github.simulatan.ui.pages
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -58,6 +57,10 @@ fun ControlPage(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = Modifier.widthIn(min = 700.dp)
 	) {
+		val getPreset = { presets.firstOrNull { it.messageRows == messages } }
+		val presetState = remember { mutableStateOf(getPreset()) }
+		val updatePresetState = { presetState.value = getPreset() }
+
 		LazyColumn(verticalArrangement = Arrangement.spacedBy(5.dp)) {
 			itemsIndexed(messages) { index, item ->
 				MessageRowEditComponent(settings, navController, item, index) { newItem ->
@@ -66,6 +69,8 @@ fun ControlPage(
 					} else {
 						messages.removeAt(index)
 					}
+
+					updatePresetState()
 				}
 			}
 		}
@@ -90,16 +95,12 @@ fun ControlPage(
 			Button(onClick = { composableScope.launch { send(messages, settings) } }) {
 				Text("Send!")
 			}
-
-			val isBookmark = remember {
-				mutableStateOf(presets.any { it.messageRows == messages })
-			}
-			Bookmark(isBookmark, presets, messages)
+			Bookmark(presetState, presets, messages)
 		}
 	}
 
 @Composable
-private fun Bookmark(isBookmark: MutableState<Boolean>, presets: Presets, messages: Messages) {
+private fun Bookmark(currentPreset: MutableState<Preset?>, presets: Presets, messages: Messages) {
 	var bookmarkPopupShown by remember { mutableStateOf(false) }
 
 	Button(
@@ -110,7 +111,7 @@ private fun Bookmark(isBookmark: MutableState<Boolean>, presets: Presets, messag
 		Icon(
 			painter = painterResource(
 				id =
-				if (isBookmark.value) R.drawable.baseline_bookmark_24
+				if (currentPreset.value != null) R.drawable.baseline_bookmark_24
 				else R.drawable.baseline_bookmark_border_24
 			),
 			contentDescription = "Bookmark as Preset"
@@ -118,18 +119,23 @@ private fun Bookmark(isBookmark: MutableState<Boolean>, presets: Presets, messag
 	}
 
 	if (bookmarkPopupShown) {
-		var presetName by remember { mutableStateOf("") }
+		var presetName by remember { mutableStateOf(currentPreset.value?.name ?: "") }
 
 		AlertDialog(
 			onDismissRequest = { bookmarkPopupShown = false },
 			confirmButton = {
+				val isNewPreset: (Preset) -> Boolean = { it.name == presetName }
 				TextButton(onClick = {
 					bookmarkPopupShown = false
-					presets.add(Preset(presetName, messages.toList()))
-					isBookmark.value = true
-					Log.println(Log.INFO, null, "Presets: ${presets.toList()} messages: ${messages.toList()}")
+					val newPreset = Preset(presetName, messages.toList())
+					if (presets.any(isNewPreset)) {
+						presets[presets.indexOfFirst(isNewPreset)] = newPreset
+					} else {
+						presets.add(newPreset)
+					}
+					currentPreset.value = newPreset
 				}) {
-					Text("Save")
+					Text(if (presets.any(isNewPreset)) "Overwrite" else "Save")
 				}
 			},
 			dismissButton = {

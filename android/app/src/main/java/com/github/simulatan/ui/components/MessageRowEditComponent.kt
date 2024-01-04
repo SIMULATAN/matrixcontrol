@@ -47,7 +47,7 @@ fun MessageRowEditComponent(
 	index: Int,
 	rowEditCallback: (MessageRow?) -> Unit
 ) {
-	val content: @Composable (Modifier) -> Unit = @Composable { baseModifier ->
+	val content: @Composable () -> Unit = @Composable {
 		ChildComponent(
 			row,
 			settings,
@@ -64,11 +64,11 @@ fun MessageRowEditComponent(
 	) {
 		if (settings.tabletMode) {
 			DeleteComponent(index, rowEditCallback)
-			content(Modifier)
+			content()
 		} else {
 			DeleteComponent(index, rowEditCallback)
 			Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-				content(Modifier)
+				content()
 			}
 		}
 	}
