@@ -8,25 +8,34 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 interface AppPreferences {
 	var server: String
 	var serialPort: String
 	var tabletMode: Boolean
+	var presets_instantApply: Boolean
+	var presets_stayOnPage: Boolean
 }
 
 data class AppPreferencesContainer(
 	override var server: String,
 	override var serialPort: String,
-	override var tabletMode: Boolean
+	override var tabletMode: Boolean,
+	override var presets_instantApply: Boolean = true,
+	override var presets_stayOnPage: Boolean = false
 ) : AppPreferences
 
-val MockSettings = AppPreferencesContainer(
+val DefaultSettings = AppPreferencesContainer(
 	server = "http://localhost:7070",
 	serialPort = "/dev/ttyUSB0",
 	tabletMode = false
 )
+
+object MockSettings {
+	val TabletMode = DefaultSettings.copy(tabletMode = true)
+	val NoTabletMode = DefaultSettings.copy(tabletMode = false)
+}
 
 internal class AppPreferencesImpl(context: Context) : AppPreferences {
 	private val dataStore = context.dataStore
@@ -46,6 +55,18 @@ internal class AppPreferencesImpl(context: Context) : AppPreferences {
 	override var tabletMode by PreferenceDataStore(
 		dataStore = dataStore,
 		key = booleanPreferencesKey("tabletMode"),
+		defaultValue = false
+	)
+
+	override var presets_instantApply by PreferenceDataStore(
+		dataStore = dataStore,
+		key = booleanPreferencesKey("presets.instantApply"),
+		defaultValue = true
+	)
+
+	override var presets_stayOnPage by PreferenceDataStore(
+		dataStore = dataStore,
+		key = booleanPreferencesKey("presets.stayOnPage"),
 		defaultValue = false
 	)
 }

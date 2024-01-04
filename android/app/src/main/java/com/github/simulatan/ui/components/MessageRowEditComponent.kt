@@ -36,7 +36,7 @@ import com.github.simulatan.MessageRow
 import com.github.simulatan.matrixcontrol.protocol.message.parts.TransitionMessagePart
 import com.github.simulatan.ui.pages.Page
 import com.github.simulatan.utils.AppPreferences
-import com.github.simulatan.utils.MockSettings
+import com.github.simulatan.utils.DefaultSettings
 import com.github.simulatan.utils.navigate
 
 @Composable
@@ -160,7 +160,7 @@ fun MessageRowEditComponentPreview(
 	Column {
 		(0..<parameters.rows).map {
 			MessageRowEditComponent(
-				settings = MockSettings.copy(tabletMode = parameters.tabletMode),
+				settings = DefaultSettings.copy(tabletMode = parameters.tabletMode),
 				navController = rememberNavController(),
 				row = MessageRow.SAMPLE.copy(
 					transition = TransitionMessagePart.entries[it % TransitionMessagePart.entries.size],

@@ -3,6 +3,8 @@ package com.github.simulatan.utils
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavController
@@ -21,5 +23,12 @@ operator fun PaddingValues.plus(other: PaddingValues): PaddingValues = PaddingVa
 
 fun NavController.navigate(page: Page) = navigate(page.name)
 
-fun NavController.navigate(page: Page, vararg parameters: Any)
-	= navigate(page.routeParams(*parameters))
+fun NavController.navigate(page: Page, vararg parameters: Any) =
+	navigate(page.routeParams(*parameters))
+
+fun TextStyle.fixVerticalAlign() = copy(
+	lineHeightStyle = LineHeightStyle(
+		alignment = LineHeightStyle.Alignment.Proportional,
+		trim = LineHeightStyle.Trim.None
+	)
+)

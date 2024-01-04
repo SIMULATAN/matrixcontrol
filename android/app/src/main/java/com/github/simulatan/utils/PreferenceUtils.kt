@@ -9,6 +9,11 @@ import kotlinx.coroutines.runBlocking
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+fun <T> DataStore<Preferences>.get(
+	key: Preferences.Key<T>
+): T? = runBlocking {
+	data.first()[key]
+}
 
 fun <T> DataStore<Preferences>.get(
 	key: Preferences.Key<T>,
@@ -30,7 +35,7 @@ fun <T> DataStore<Preferences>.set(
 	}
 }
 
-class PreferenceDataStore<T>(
+open class PreferenceDataStore<T>(
 	private val dataStore: DataStore<Preferences>,
 	private val key: Preferences.Key<T>,
 	private val defaultValue: T

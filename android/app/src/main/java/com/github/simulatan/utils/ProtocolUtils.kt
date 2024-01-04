@@ -1,6 +1,6 @@
 package com.github.simulatan.utils
 
-import com.github.simulatan.Messages
+import com.github.simulatan.ImmutableMessages
 import com.github.simulatan.matrixcontrol.protocol.ProtocolBuilder
 import com.github.simulatan.matrixcontrol.protocol.message.MessageBuilder
 import com.github.simulatan.matrixcontrol.protocol.message.parts.NewlineMessagePart
@@ -13,7 +13,7 @@ import io.ktor.client.request.setBody
 val client = HttpClient()
 
 @OptIn(ExperimentalUnsignedTypes::class)
-suspend fun send(messages: Messages, settings: AppPreferences) {
+suspend fun send(messages: ImmutableMessages, settings: AppPreferences) {
 	val protocolBuilder = ProtocolBuilder()
 
 	val iter = messages.iterator()

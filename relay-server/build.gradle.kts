@@ -1,5 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.21"
+    application
+    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 group = "com.github.simulatan.matrixcontrol"
@@ -18,4 +20,8 @@ dependencies {
 
 kotlin {
     jvmToolchain(17)
+}
+
+application {
+    mainClass = "com.github.simulatan.matrixcontrol.relay.server.RelayServerKt"
 }

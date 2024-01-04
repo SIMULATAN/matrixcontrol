@@ -8,13 +8,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,15 +30,16 @@ import androidx.navigation.compose.rememberNavController
 import com.github.simulatan.ui.components.CustomAppBar
 import com.github.simulatan.ui.pages.ControlPage
 import com.github.simulatan.ui.pages.Page
+import com.github.simulatan.ui.pages.PresetsPage
 import com.github.simulatan.ui.pages.SettingsPage
 import com.github.simulatan.ui.pages.TransitionSelectPage
 import com.github.simulatan.ui.theme.MatrixcontrolTheme
 import com.github.simulatan.utils.AppPreferences
 import com.github.simulatan.utils.AppPreferencesImpl
 import com.github.simulatan.utils.MockSettings
+import com.github.simulatan.utils.dataStore
+import com.github.simulatan.utils.navigate
 import com.github.simulatan.utils.plus
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 
 class MainActivity : ComponentActivity() {
@@ -45,22 +50,32 @@ class MainActivity : ComponentActivity() {
 		}
 	}
 
-	var messages = mutableStateListOf(MessageRow.SAMPLE)
+	private var messages = mutableStateListOf(MessageRow.SAMPLE)
+	private var presets = mutableStateListOf(Preset.SAMPLE)
 
 	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
-		outState.putString("currentMessages", Json.encodeToString(messages.toList()))
+		// `toList` is required because `SnapshotStateList` doesn't have a serializer
+		outState.putObject("currentMessages", messages.toList())
+
+		val presets = presets.toList()
+		outState.putObject("presets", presets)
+		baseContext.dataStore.setObject(presetsKey, presets)
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		// pretty ass kotlin code :)
-		messages = mutableStateListOf(*(savedInstanceState?.getString("currentMessages")?.let {
-			Json.decodeFromString<List<MessageRow>>(it)
-		}?.toTypedArray() ?: arrayOf(MessageRow.SAMPLE)))
+		messages = savedInstanceState.getObject<ImmutableMessages?>("messages", null)?.toMutableStateList()
+				?: mutableStateListOf(MessageRow.SAMPLE)
+
+		presets =
+			savedInstanceState.getObject<ImmutablePresets?>("presets", null)?.toMutableStateList()
+			?: baseContext.dataStore.getObject<ImmutablePresets?>(presetsKey)?.toMutableStateList()
+			?: mutableStateListOf(Preset.SAMPLE)
 
 		setContent {
 			val messages: Messages = remember { messages }
+			val presets: Presets = remember { presets }
 
 			MatrixcontrolTheme {
 				// A surface container using the 'background' color from the theme
@@ -69,7 +84,7 @@ class MainActivity : ComponentActivity() {
 					color = MaterialTheme.colorScheme.background
 				) {
 					val appPreferences = AppPreferencesImpl(baseContext)
-					MainComponent(appPreferences = appPreferences, messages = messages)
+					MainComponent(appPreferences, messages, presets)
 				}
 			}
 		}
@@ -77,7 +92,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainComponent(appPreferences: AppPreferences, messages: Messages) {
+fun MainComponent(appPreferences: AppPreferences, messages: Messages, presets: Presets) {
 	val navController = rememberNavController()
 	val backStackEntry by navController.currentBackStackEntryAsState()
 
@@ -86,9 +101,22 @@ fun MainComponent(appPreferences: AppPreferences, messages: Messages) {
 	Scaffold(
 		topBar = {
 			CustomAppBar(
+				settings = appPreferences,
 				currentScreen = currentScreen,
 				navController = navController
 			)
+		},
+		bottomBar = {
+			BottomAppBar {
+				listOf(Page.SETTINGS, Page.CONTROL, Page.PRESETS).forEach {
+					NavigationBarItem(
+						selected = currentScreen == it,
+						onClick = { navController.navigate(it) },
+						icon = it.icon(),
+						label = { Text(it.title) }
+					)
+				}
+			}
 		}
 	) { innerPadding ->
 		Column(
@@ -102,8 +130,11 @@ fun MainComponent(appPreferences: AppPreferences, messages: Messages) {
 				navController = navController,
 				startDestination = Page.CONTROL.name
 			) {
-				composable(Page.CONTROL.name) {
-					ControlPage(appPreferences, navController, messages)
+				composable(Page.SETTINGS.route) {
+					SettingsPage(appPreferences, navController)
+				}
+				composable(Page.CONTROL.route) {
+					ControlPage(appPreferences, navController, messages, presets)
 				}
 				composable(
 					Page.TRANSITION_SELECT.route,
@@ -115,8 +146,8 @@ fun MainComponent(appPreferences: AppPreferences, messages: Messages) {
 						it.arguments?.getInt(Page.TRANSITION_SELECT.arguments.first().name)!!
 					)
 				}
-				composable(Page.SETTINGS.name) {
-					SettingsPage(appPreferences, navController)
+				composable(Page.PRESETS.route) {
+					PresetsPage(appPreferences, navController, messages, presets)
 				}
 			}
 		}
@@ -132,6 +163,10 @@ fun MainComponent(appPreferences: AppPreferences, messages: Messages) {
 @Composable
 fun MainPreview() {
 	MatrixcontrolTheme {
-		MainComponent(MockSettings.copy(tabletMode = true), mutableListOf(MessageRow.SAMPLE))
+		MainComponent(
+			MockSettings.TabletMode,
+			mutableListOf(MessageRow.SAMPLE),
+			mutableListOf(Preset.SAMPLE)
+		)
 	}
 }

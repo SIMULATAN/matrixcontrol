@@ -21,7 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.github.simulatan.ui.components.SwitchWithLabel
 import com.github.simulatan.utils.AppPreferences
-import com.github.simulatan.utils.MockSettings
+import com.github.simulatan.utils.DefaultSettings
 
 @Composable
 fun SettingsPage(settings: AppPreferences, navController: NavController) {
@@ -64,4 +64,7 @@ fun SettingsPage(settings: AppPreferences, navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun SettingsPagePreview() = SettingsPage(settings = MockSettings, navController = rememberNavController())
+fun SettingsPagePreview() = SettingsPage(
+	settings = DefaultSettings,
+	navController = rememberNavController()
+)
