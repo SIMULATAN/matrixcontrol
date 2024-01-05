@@ -15,9 +15,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +42,7 @@ import com.github.simulatan.utils.MockSettings
 import com.github.simulatan.utils.dataStore
 import com.github.simulatan.utils.navigate
 import com.github.simulatan.utils.plus
+import kotlinx.coroutines.flow.collectLatest
 
 
 class MainActivity : ComponentActivity() {
@@ -74,6 +77,14 @@ class MainActivity : ComponentActivity() {
 			?: mutableStateListOf(Preset.SAMPLE)
 
 		setContent {
+			// observes `presets` to auto-save on change
+			// this is required because an app crash will discard all changes!
+			LaunchedEffect(Unit) {
+				snapshotFlow { presets.toList() }.collectLatest {
+					baseContext.dataStore.setObject(presetsKey, it)
+				}
+			}
+
 			val messages: Messages = remember { messages }
 			val presets: Presets = remember { presets }
 
