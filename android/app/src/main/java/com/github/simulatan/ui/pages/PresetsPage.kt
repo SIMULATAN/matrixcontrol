@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,23 +43,27 @@ import com.github.simulatan.utils.MockSettings
 import com.github.simulatan.utils.fixVerticalAlign
 import com.github.simulatan.utils.navigate
 import com.github.simulatan.utils.send
+import com.github.simulatan.utils.tryOrShowError
 import kotlinx.coroutines.launch
 
 @Composable
 fun PresetsPage(
 	settings: AppPreferences,
 	navController: NavController,
+	snackbarHostState: SnackbarHostState,
 	messages: Messages,
 	presets: Presets
 ) {
-	val composableScope = rememberCoroutineScope()
+	val scope = rememberCoroutineScope()
 	val presetSelected: (Preset) -> Unit = { preset ->
 		messages.clear()
 		messages.addAll(preset.messageRows)
 
 		if (settings.presets_instantApply) {
-			composableScope.launch {
-				send(preset.messageRows, settings)
+			scope.launch {
+				tryOrShowError(snackbarHostState) {
+					send(preset.messageRows, settings)
+				}
 			}
 		}
 		if (!settings.presets_stayOnPage) {
@@ -156,6 +161,7 @@ fun PresetsPagePreview() {
 			PresetsPage(
 				settings = settings,
 				navController = rememberNavController(),
+				snackbarHostState = SnackbarHostState(),
 				messages = mutableListOf(MessageRow.SAMPLE, MessageRow.SAMPLE2),
 				presets = mutableListOf(Preset.SAMPLE, Preset.SAMPLE2)
 			)

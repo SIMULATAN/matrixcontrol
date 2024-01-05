@@ -9,6 +9,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
 
 val client = HttpClient()
 
@@ -37,5 +39,14 @@ suspend fun sendBytes(bytes: ByteArray, settings: AppPreferences) {
 		setBody(bytes)
 		header("Serial-Port", settings.serialPort)
 	}
-	println(response)
+
+	if (!response.status.isSuccess()) {
+		val responseText = response.bodyAsText()
+		val suffix = if (responseText.isBlank()) {
+			""
+		} else {
+			" - $responseText"
+		}
+		throw IllegalStateException("Failed to send: Status ${response.status.value}$suffix")
+	}
 }

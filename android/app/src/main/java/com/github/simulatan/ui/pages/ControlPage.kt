@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -43,12 +44,14 @@ import com.github.simulatan.ui.components.MessageRowEditComponent
 import com.github.simulatan.utils.AppPreferences
 import com.github.simulatan.utils.DefaultSettings
 import com.github.simulatan.utils.send
+import com.github.simulatan.utils.tryOrShowError
 import kotlinx.coroutines.launch
 
 @Composable
 fun ControlPage(
 	settings: AppPreferences,
 	navController: NavController,
+	snackbarHostState: SnackbarHostState,
 	messages: Messages,
 	presets: Presets
 ) =
@@ -92,7 +95,16 @@ fun ControlPage(
 				)
 			}
 			val composableScope = rememberCoroutineScope()
-			Button(onClick = { composableScope.launch { send(messages, settings) } }) {
+			Button(onClick = {
+				composableScope.launch {
+					tryOrShowError(snackbarHostState) {
+						send(
+							messages,
+							settings
+						)
+					}
+				}
+			}) {
 				Text("Send!")
 			}
 			Bookmark(presetState, presets, messages)
@@ -167,6 +179,7 @@ private fun Bookmark(currentPreset: MutableState<Preset?>, presets: Presets, mes
 fun ControlPagePreview() = ControlPage(
 	settings = DefaultSettings,
 	rememberNavController(),
+	SnackbarHostState(),
 	mutableListOf(MessageRow.SAMPLE, MessageRow.SAMPLE2),
 	mutableListOf(Preset.SAMPLE2)
 )

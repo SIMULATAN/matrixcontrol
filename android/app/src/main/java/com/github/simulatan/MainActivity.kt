@@ -12,6 +12,8 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -88,6 +90,8 @@ class MainActivity : ComponentActivity() {
 			val messages: Messages = remember { messages }
 			val presets: Presets = remember { presets }
 
+			val snackbarHostState = remember { SnackbarHostState() }
+
 			MatrixcontrolTheme {
 				// A surface container using the 'background' color from the theme
 				Surface(
@@ -95,7 +99,7 @@ class MainActivity : ComponentActivity() {
 					color = MaterialTheme.colorScheme.background
 				) {
 					val appPreferences = AppPreferencesImpl(baseContext)
-					MainComponent(appPreferences, messages, presets)
+					MainComponent(appPreferences, snackbarHostState, messages, presets)
 				}
 			}
 		}
@@ -103,13 +107,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainComponent(appPreferences: AppPreferences, messages: Messages, presets: Presets) {
+fun MainComponent(
+	appPreferences: AppPreferences,
+	snackbarHostState: SnackbarHostState,
+	messages: Messages,
+	presets: Presets
+) {
 	val navController = rememberNavController()
 	val backStackEntry by navController.currentBackStackEntryAsState()
 
 	val currentScreen = Page.parse(backStackEntry?.destination?.route ?: Page.CONTROL.name)
 
 	Scaffold(
+		snackbarHost = {
+			SnackbarHost(hostState = snackbarHostState)
+		},
 		topBar = {
 			CustomAppBar(
 				settings = appPreferences,
@@ -145,7 +157,7 @@ fun MainComponent(appPreferences: AppPreferences, messages: Messages, presets: P
 					SettingsPage(appPreferences, navController)
 				}
 				composable(Page.CONTROL.route) {
-					ControlPage(appPreferences, navController, messages, presets)
+					ControlPage(appPreferences, navController, snackbarHostState, messages, presets)
 				}
 				composable(
 					Page.TRANSITION_SELECT.route,
@@ -158,7 +170,7 @@ fun MainComponent(appPreferences: AppPreferences, messages: Messages, presets: P
 					)
 				}
 				composable(Page.PRESETS.route) {
-					PresetsPage(appPreferences, navController, messages, presets)
+					PresetsPage(appPreferences, navController, snackbarHostState, messages, presets)
 				}
 			}
 		}
@@ -176,6 +188,7 @@ fun MainPreview() {
 	MatrixcontrolTheme {
 		MainComponent(
 			MockSettings.TabletMode,
+			SnackbarHostState(),
 			mutableListOf(MessageRow.SAMPLE),
 			mutableListOf(Preset.SAMPLE)
 		)

@@ -3,6 +3,7 @@ package com.github.simulatan.utils
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.Dp
@@ -32,3 +33,14 @@ fun TextStyle.fixVerticalAlign() = copy(
 		trim = LineHeightStyle.Trim.None
 	)
 )
+
+suspend fun tryOrShowError(snackbarHostState: SnackbarHostState, block: suspend () -> Unit) {
+	try {
+		block()
+	} catch (exception: Exception) {
+		snackbarHostState.showSnackbar(
+			message = exception.message ?: "Unknown error occurred.",
+			withDismissAction = true
+		)
+	}
+}
