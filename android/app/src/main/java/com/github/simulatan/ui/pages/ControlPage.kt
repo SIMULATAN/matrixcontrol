@@ -151,7 +151,8 @@ private fun Bookmark(currentPreset: MutableState<Preset?>, presets: Presets, mes
 					label = { Text("Preset Name") },
 					modifier = Modifier.focusRequester(focusRequester),
 					value = presetName,
-					onValueChange = { presetName = it }
+					onValueChange = { presetName = it },
+					singleLine = true
 				)
 				LaunchedEffect(Unit) {
 					focusRequester.requestFocus()

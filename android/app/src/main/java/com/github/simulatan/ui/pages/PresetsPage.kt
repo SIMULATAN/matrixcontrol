@@ -1,10 +1,18 @@
 package com.github.simulatan.ui.pages
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -18,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -56,8 +66,47 @@ fun PresetsPage(
 		}
 	}
 	// TODO: tablet mode
-	if (false && settings.tabletMode) return
+	if (settings.tabletMode) TabletLayout(presets, presetSelected)
 	else PhoneLayout(presets, presetSelected)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TabletLayout(presets: Presets, presetSelected: (Preset) -> Unit) {
+	LazyHorizontalGrid(
+		rows = GridCells.Adaptive(minSize = 140.dp),
+		contentPadding = PaddingValues(20.dp),
+		verticalArrangement = Arrangement.spacedBy(16.dp),
+		horizontalArrangement = Arrangement.spacedBy(16.dp)
+	) {
+		items(presets) {
+			Card(
+				modifier = Modifier
+					.padding(4.dp),
+				onClick = { presetSelected(it) }
+			) {
+				Column(
+					modifier = Modifier.fillMaxHeight(),
+					verticalArrangement = Arrangement.Center
+				) {
+					Text(
+						text = it.name,
+						modifier = Modifier
+							.padding(16.dp)
+							.width(320.dp)
+							.wrapContentHeight(align = Alignment.CenterVertically),
+						style = Typography.displayMedium.copy(
+							lineHeightStyle = LineHeightStyle(
+								alignment = LineHeightStyle.Alignment.Bottom,
+								trim = LineHeightStyle.Trim.None
+							)
+						),
+						textAlign = TextAlign.Center
+					)
+				}
+			}
+		}
+	}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +122,9 @@ private fun PhoneLayout(presets: Presets, presetSelected: (Preset) -> Unit) {
 				onClick = { presetSelected(preset) }
 			) {
 				Row(
-					modifier = Modifier.fillMaxWidth().padding(5.dp),
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(5.dp),
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.SpaceBetween
 				) {
