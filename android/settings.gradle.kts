@@ -15,4 +15,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "matrixcontrol"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
+include(":app:relay-provider-api")
+include(":app:relay-provider-logging")
+include(":app:relay-provider-ktor")
+includeBuild("app/conventions")
