@@ -19,7 +19,7 @@ fun CommonExtension<*, *, *, *, *, *>.baseAndroidConfiguration() {
 		compose = true
 	}
 	composeOptions {
-		kotlinCompilerExtensionVersion = "1.5.1"
+		kotlinCompilerExtensionVersion = "1.5.11"
 	}
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_1_8
@@ -32,14 +32,14 @@ fun CommonExtension<*, *, *, *, *, *>.baseAndroidConfiguration() {
 }
 
 fun DependencyHandler.addComposeDependencies() {
-	add("api", "androidx.core:core-ktx:1.10.1")
-	add("api", "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-	add("api", "androidx.activity:activity-compose:1.7.0")
-	add("api", platform("androidx.compose:compose-bom:2023.08.00"))
+	add("api", "androidx.core:core-ktx:1.12.0")
+	add("api", "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+	add("api", "androidx.activity:activity-compose:1.8.2")
+	add("api", platform("androidx.compose:compose-bom:2024.04.00"))
 	add("api", "androidx.compose.ui:ui")
 	add("api", "androidx.compose.ui:ui-graphics")
 	add("api", "androidx.compose.ui:ui-tooling-preview")
 	add("api", "androidx.compose.material3:material3")
-	add("api", "androidx.datastore:datastore-preferences:1.0.0")
-	add("api", "androidx.navigation:navigation-compose:2.7.6")
+	add("api", "androidx.datastore:datastore-preferences:1.1.0-beta02")
+	add("api", "androidx.navigation:navigation-compose:2.7.7")
 }

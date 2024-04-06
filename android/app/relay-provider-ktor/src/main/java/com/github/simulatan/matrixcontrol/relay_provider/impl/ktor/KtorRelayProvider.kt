@@ -42,13 +42,13 @@ class KtorRelayProvider : RelayProvider<KtorRelaySettings, KtorRelay>() {
 
 	override fun constructRelay(settings: KtorRelaySettings) = KtorRelay(settings)
 	@Composable
-	override fun Widget(settings: KtorRelaySettings, settingsCallback: (KtorRelaySettings) -> Unit) {
+	override fun Widget(settings: KtorRelaySettings, callback: (KtorRelaySettings) -> Unit) {
 		var server by remember { mutableStateOf(settings.server) }
 		TextField(
 			value = server,
 			onValueChange = {
 				server = it
-				settingsCallback(settings.copy(server = it))
+				callback(settings.copy(server = it))
 			},
 			label = { Text("Server") })
 
@@ -57,7 +57,7 @@ class KtorRelayProvider : RelayProvider<KtorRelaySettings, KtorRelay>() {
 			value = serialPort,
 			onValueChange = {
 				serialPort = it
-				settingsCallback(settings.copy(serialPort = it))
+				callback(settings.copy(serialPort = it))
 			},
 			label = { Text("Serial Port") }
 		)
