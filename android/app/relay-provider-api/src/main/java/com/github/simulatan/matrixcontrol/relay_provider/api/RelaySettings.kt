@@ -4,5 +4,5 @@ interface RelaySettings
 
 data object NoOpRelaySettings : RelaySettings
 object NoOpRelay : Relay<NoOpRelaySettings> {
-	override suspend fun sendBytes(bytes: ByteArray) = Unit
+	override suspend fun sendBytes(bytes: UByteArray) = Unit
 }

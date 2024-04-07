@@ -21,18 +21,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.github.simulatan.matrixcontrol.relay_provider.api.Relay
-import com.github.simulatan.matrixcontrol.relay_provider.api.RelayProvider
-import com.github.simulatan.matrixcontrol.relay_provider.api.RelaySettings
+import com.github.simulatan.matrixcontrol.relay_provider.api.PickedRelay
+import com.github.simulatan.matrixcontrol.relay_provider.api.RelayViewModel
+import com.github.simulatan.matrixcontrol.relay_provider.api.RelayViewModelFactory
 import com.github.simulatan.ui.components.SwitchWithLabel
 import com.github.simulatan.utils.AppPreferences
 import com.github.simulatan.utils.DefaultSettings
-import com.github.simulatan.utils.PickedRelay
 import com.github.simulatan.utils.RelayRegistry
-import java.util.logging.Logger
-import kotlin.reflect.safeCast
+import com.github.simulatan.utils.getProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,9 +41,12 @@ fun SettingsPage(settings: AppPreferences, navController: NavController) {
 		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = Modifier.width(IntrinsicSize.Max)
 	) {
+		val relayViewModel: RelayViewModel =
+			viewModel(factory = RelayViewModelFactory(settings.relay))
+
 		val availableRelays = RelayRegistry.getAvailableRelays()
 		var expanded by remember { mutableStateOf(false) }
-		var relay by remember { mutableStateOf(settings.relay) }
+		val relay by relayViewModel.pickedRelay
 		ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
 			TextField(
 				value = relay.getProvider()?.name ?: "",
@@ -64,7 +66,7 @@ fun SettingsPage(settings: AppPreferences, navController: NavController) {
 					DropdownMenuItem(
 						text = { Text(text = item.name) },
 						onClick = {
-							relay = PickedRelay.fromProvider(item)
+							relayViewModel.updateRelay(PickedRelay.fromProvider(item))
 							expanded = false
 						}
 					)
@@ -73,18 +75,7 @@ fun SettingsPage(settings: AppPreferences, navController: NavController) {
 		}
 
 		relay.getProvider()?.apply {
-			@Suppress("UNCHECKED_CAST")
-			@Composable
-			fun <S : RelaySettings, R : Relay<S>> makeWidget(provider: RelayProvider<S, R>) {
-				val providerSettings = provider.settingsClass.safeCast(relay.settings) ?: let {
-					Logger.getLogger(javaClass.simpleName).warning("Settings not of expected type ${provider.settingsClass}: ${relay.settings}")
-					provider.defaultSettings
-				}
-				provider.Widget(providerSettings) {
-					relay.settings = it
-				}
-			}
-			makeWidget(this)
+			this.Widget(relayViewModel)
 		}
 
 		var tabletMode by remember { mutableStateOf(settings.tabletMode) }
@@ -97,7 +88,7 @@ fun SettingsPage(settings: AppPreferences, navController: NavController) {
 
 		Button(modifier = Modifier.fillMaxWidth(), onClick = {
 			settings.tabletMode = tabletMode
-			settings.relay = relay
+			settings.relay = relayViewModel.pickedRelay.value
 			navController.navigateUp()
 		}) {
 			Text("Save")

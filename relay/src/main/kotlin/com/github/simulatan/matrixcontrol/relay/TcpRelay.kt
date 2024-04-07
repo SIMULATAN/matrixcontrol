@@ -5,7 +5,7 @@ import java.net.Socket
 /**
  * Sends the given bytes to the matrix display over reverse TCP.
  */
-class TcpRelay(host: String, port: Short) : MatrixRelay {
+class TcpRelay(host: String, port: UShort) : MatrixRelay {
 	private val socket = Socket(host, port.toInt())
 
 	override fun relayMessage(bytes: UByteArray): Int {

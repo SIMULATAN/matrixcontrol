@@ -3,13 +3,10 @@ package com.github.simulatan.matrixcontrol.relay_provider.impl.ktor
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.github.simulatan.matrixcontrol.relay_provider.api.Relay
 import com.github.simulatan.matrixcontrol.relay_provider.api.RelayProvider
 import com.github.simulatan.matrixcontrol.relay_provider.api.RelaySettings
+import com.github.simulatan.matrixcontrol.relay_provider.api.RelayViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -18,7 +15,6 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.logging.Logger
 
 @Serializable
 @SerialName("Ktor")
@@ -42,22 +38,19 @@ class KtorRelayProvider : RelayProvider<KtorRelaySettings, KtorRelay>() {
 
 	override fun constructRelay(settings: KtorRelaySettings) = KtorRelay(settings)
 	@Composable
-	override fun Widget(settings: KtorRelaySettings, callback: (KtorRelaySettings) -> Unit) {
-		var server by remember { mutableStateOf(settings.server) }
+	override fun Widget(viewModel: RelayViewModel) {
+		val settings = viewModel.getSettings<KtorRelaySettings>()
 		TextField(
-			value = server,
+			value = settings.server,
 			onValueChange = {
-				server = it
-				callback(settings.copy(server = it))
+				viewModel.updateSettings(settings.copy(server = it))
 			},
 			label = { Text("Server") })
 
-		var serialPort by remember { mutableStateOf(settings.serialPort) }
 		TextField(
-			value = serialPort,
+			value = settings.serialPort,
 			onValueChange = {
-				serialPort = it
-				callback(settings.copy(serialPort = it))
+				viewModel.updateSettings(settings.copy(serialPort = it))
 			},
 			label = { Text("Serial Port") }
 		)
@@ -65,10 +58,9 @@ class KtorRelayProvider : RelayProvider<KtorRelaySettings, KtorRelay>() {
 }
 
 class KtorRelay(val settings: KtorRelaySettings) : Relay<KtorRelaySettings> {
-	private val logger = Logger.getLogger(javaClass.simpleName)
 	private val client = HttpClient()
 
-	override suspend fun sendBytes(bytes: ByteArray) {
+	override suspend fun sendBytes(bytes: UByteArray) {
 		val response = client.post("${settings.server}/raw") {
 			setBody(bytes)
 			header("Serial-Port", settings.serialPort)

@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +43,7 @@ import com.github.simulatan.utils.fixVerticalAlign
 import com.github.simulatan.utils.navigate
 import com.github.simulatan.utils.send
 import com.github.simulatan.utils.tryOrShowError
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,7 +54,7 @@ fun PresetsPage(
 	messages: Messages,
 	presets: Presets
 ) {
-	val scope = rememberCoroutineScope()
+	val scope = rememberCoroutineScope { Dispatchers.IO }
 	val presetSelected: (Preset) -> Unit = { preset ->
 		messages.clear()
 		messages.addAll(preset.messageRows)
@@ -70,12 +70,10 @@ fun PresetsPage(
 			navController.navigate(Page.CONTROL)
 		}
 	}
-	// TODO: tablet mode
 	if (settings.tabletMode) TabletLayout(presets, presetSelected)
 	else PhoneLayout(presets, presetSelected)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TabletLayout(presets: Presets, presetSelected: (Preset) -> Unit) {
 	LazyHorizontalGrid(
@@ -114,7 +112,6 @@ private fun TabletLayout(presets: Presets, presetSelected: (Preset) -> Unit) {
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PhoneLayout(presets: Presets, presetSelected: (Preset) -> Unit) {
 	LazyColumn {

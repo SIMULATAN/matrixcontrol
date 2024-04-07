@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.github.simulatan.matrixcontrol.relay_provider.api.NoOpRelay
 import com.github.simulatan.matrixcontrol.relay_provider.api.NoOpRelaySettings
+import com.github.simulatan.matrixcontrol.relay_provider.api.PickedRelay
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
 import kotlin.reflect.typeOf

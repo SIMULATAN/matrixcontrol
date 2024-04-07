@@ -22,9 +22,10 @@ suspend fun send(messages: ImmutableMessages, settings: AppPreferences) {
 
 	protocolBuilder.message = messageBuilder
 
-	sendBytes(protocolBuilder.build().toByteArray(), settings)
+	sendBytes(protocolBuilder.build(), settings)
 }
 
-suspend fun sendBytes(bytes: ByteArray, settings: AppPreferences) =
+@OptIn(ExperimentalUnsignedTypes::class)
+suspend fun sendBytes(bytes: UByteArray, settings: AppPreferences) =
 	settings.relay.get()!!
 		.sendBytes(bytes)

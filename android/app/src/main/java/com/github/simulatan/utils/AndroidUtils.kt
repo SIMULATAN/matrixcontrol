@@ -39,7 +39,7 @@ suspend fun tryOrShowError(snackbarHostState: SnackbarHostState, block: suspend 
 		block()
 	} catch (exception: Exception) {
 		snackbarHostState.showSnackbar(
-			message = exception.message ?: "Unknown error occurred.",
+			message = exception.message ?: "${exception.javaClass.simpleName}: Unknown error occurred.",
 			withDismissAction = true
 		)
 	}

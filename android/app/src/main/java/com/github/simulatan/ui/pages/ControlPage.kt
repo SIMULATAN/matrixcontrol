@@ -45,6 +45,7 @@ import com.github.simulatan.utils.AppPreferences
 import com.github.simulatan.utils.DefaultSettings
 import com.github.simulatan.utils.send
 import com.github.simulatan.utils.tryOrShowError
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -94,7 +95,7 @@ fun ControlPage(
 					contentDescription = "add item"
 				)
 			}
-			val composableScope = rememberCoroutineScope()
+			val composableScope = rememberCoroutineScope { Dispatchers.IO }
 			Button(onClick = {
 				composableScope.launch {
 					tryOrShowError(snackbarHostState) {

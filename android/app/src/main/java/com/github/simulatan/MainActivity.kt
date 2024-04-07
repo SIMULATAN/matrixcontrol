@@ -48,13 +48,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 
 class MainActivity : ComponentActivity() {
-	companion object {
-		init {
-			// broken for now
-			System.loadLibrary("jSerialComm")
-		}
-	}
-
 	private var messages = mutableStateListOf(MessageRow.SAMPLE)
 	private var presets = mutableStateListOf(Preset.SAMPLE)
 

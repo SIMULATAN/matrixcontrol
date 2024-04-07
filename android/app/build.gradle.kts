@@ -45,8 +45,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation("com.github.simulatan.matrixcontrol:matrixcontrol-protocol:1.0-SNAPSHOT")
-    implementation("com.github.simulatan.matrixcontrol:matrixcontrol-relay:1.0-SNAPSHOT")
+    implementation("com.github.simulatan.matrixcontrol:matrixcontrol-protocol:1.1.0")
+    implementation("com.github.simulatan.matrixcontrol:matrixcontrol-relay:1.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
@@ -54,4 +54,6 @@ dependencies {
     implementation(projects.app.relayProviderApi)
     implementation(projects.app.relayProviderLogging)
     implementation(projects.app.relayProviderKtor)
+    implementation(projects.app.relayProviderTcp)
+    implementation(projects.app.relayProviderDigionesp)
 }
