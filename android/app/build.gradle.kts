@@ -13,8 +13,8 @@ android {
         applicationId = "com.github.simulatan.matrixcontrol"
         minSdk = 29
         targetSdk = 34
-        versionCode = 3
-        versionName = "2.1"
+        versionCode = 4
+        versionName = "2.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

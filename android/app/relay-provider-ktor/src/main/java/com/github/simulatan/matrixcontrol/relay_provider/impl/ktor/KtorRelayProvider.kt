@@ -15,6 +15,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 @SerialName("Ktor")
@@ -62,7 +63,7 @@ class KtorRelay(val settings: KtorRelaySettings) : Relay<KtorRelaySettings> {
 
 	override suspend fun sendBytes(bytes: UByteArray) {
 		val response = client.post("${settings.server}/raw") {
-			setBody(bytes)
+			setBody(bytes.toByteArray())
 			header("Serial-Port", settings.serialPort)
 		}
 
