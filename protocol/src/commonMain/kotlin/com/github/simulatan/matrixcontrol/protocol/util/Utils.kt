@@ -25,12 +25,3 @@ fun String.hexToBytes(): UByteArray {
 	val hex = this.replace(" ", "")
 	return hex.chunked(2).map { it.toUByte(16) }.toUByteArray()
 }
-
-fun UByteArray.toHexString(): String {
-	var result = ""
-	for (b in this) {
-		val st = String.format("%02X", b.toByte())
-		result += "$st "
-	}
-	return result
-}

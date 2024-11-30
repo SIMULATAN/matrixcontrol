@@ -3,7 +3,7 @@ package com.github.simulatan.matrixcontrol.protocol.message
 import com.github.simulatan.matrixcontrol.protocol.message.parts.NewlineMessagePart
 import com.github.simulatan.matrixcontrol.protocol.message.parts.PlainTextMessagePart
 import com.github.simulatan.matrixcontrol.protocol.message.parts.TransitionMessagePart
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
 class TransitionTestCases {

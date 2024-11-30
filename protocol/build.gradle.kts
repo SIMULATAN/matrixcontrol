@@ -1,23 +1,25 @@
 plugins {
-	kotlin("jvm")
+	kotlin("multiplatform")
 	`maven-publish`
 }
 
 dependencies {
-	testImplementation("org.jetbrains.kotlin:kotlin-test")
-}
-
-tasks.test {
-	useJUnitPlatform()
+	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+	commonTestImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
 publishing {
-	publications.create<MavenPublication>("mavenJava") {
-		val subprojectJarName = tasks.jar.get().archiveBaseName.get()
+	publications.create<MavenPublication>("maven") {
+		val subprojectJarName = project.name
 		artifactId = "matrixcontrol-$subprojectJarName"
-		from(components["java"])
+		from(components["kotlin"])
 		pom {
 			name.set(artifactId)
 		}
 	}
+}
+
+kotlin {
+	jvm()
+	linuxX64()
 }

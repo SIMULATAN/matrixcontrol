@@ -4,7 +4,6 @@ import com.github.simulatan.matrixcontrol.protocol.ProtocolBuilder
 import com.github.simulatan.matrixcontrol.protocol.message.parts.NewlineMessagePart
 import com.github.simulatan.matrixcontrol.protocol.message.parts.PlainTextMessagePart
 import com.github.simulatan.matrixcontrol.protocol.message.parts.TransitionMessagePart
-import com.github.simulatan.matrixcontrol.protocol.util.toHexString
 import com.github.simulatan.matrixcontrol.relay.MatrixRelay
 import com.github.simulatan.matrixcontrol.relay.SerialRelay
 import com.github.simulatan.matrixcontrol.relay.TcpRelay

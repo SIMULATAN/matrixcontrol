@@ -1,8 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.9.21"
-	`maven-publish`
+	kotlin("jvm") version "2.1.0" apply false
+	kotlin("multiplatform") version "2.1.0" apply false
 }
 
 group = "com.github.simulatan"
@@ -13,7 +13,7 @@ repositories {
 }
 
 subprojects {
-	tasks.withType<KotlinCompilationTask<*>>().configureEach {
+	tasks.withType<KotlinCompile> {
 		compilerOptions.freeCompilerArgs.add("-opt-in=kotlin.ExperimentalUnsignedTypes,kotlin.ExperimentalStdlibApi")
 	}
 }
