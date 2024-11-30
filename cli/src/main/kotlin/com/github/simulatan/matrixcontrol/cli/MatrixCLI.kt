@@ -59,7 +59,7 @@ fun chooseTcpRelay(): TcpRelay {
 	print("Enter the host: ")
 	val host = readln()
 	print("Enter the port: ")
-	val port = readln().toShort()
+	val port = readln().toUShort()
 	return TcpRelay(host, port)
 }
 

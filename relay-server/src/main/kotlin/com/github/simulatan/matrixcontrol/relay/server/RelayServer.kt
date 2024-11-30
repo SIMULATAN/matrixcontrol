@@ -1,29 +1,41 @@
 package com.github.simulatan.matrixcontrol.relay.server
 
-import com.github.simulatan.matrixcontrol.relay.MatrixRelay
-import io.javalin.Javalin
-import io.javalin.http.HttpStatus
+import com.github.simulatan.matrixcontrol.relay.SerialRelay
+import io.ktor.http.*
+import io.ktor.server.cio.*
+import io.ktor.server.engine.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 fun main() {
-	val app = Javalin.create()
-		.post("/raw") { ctx ->
-			val portHeader = ctx.header("Serial-Port") ?: throw IllegalArgumentException("Serial-Port header missing")
-			val availablePorts = MatrixRelay.getAvailablePorts()
-			val port = availablePorts.find { it.systemPortPath == portHeader } ?: throw IllegalArgumentException("Serial port $portHeader not found")
-			val relay = MatrixRelay(port)
-			val bytes = ctx.bodyAsBytes()
-			println("Relaying ${bytes.size} bytes...")
-			val writtenBytes = relay.relayMessage(bytes.toUByteArray())
-			println("Relayed $writtenBytes bytes!")
-			if (writtenBytes == bytes.size) {
-				ctx.status(HttpStatus.NO_CONTENT)
-			} else {
-				ctx.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				if (writtenBytes == -1) {
-					ctx.result("Couldn't write anything. Are the permissions correct?")
+	embeddedServer(CIO, module = {
+		routing {
+			post("/raw") {
+				val requestedPort = call.request.header("Serial-Port")
+					?: throw IllegalArgumentException("Serial-Port header missing")
+				val availablePorts = SerialRelay.getAvailablePorts()
+				val port = availablePorts.find { it.systemPortPath == requestedPort } ?: throw IllegalArgumentException("Serial port $requestedPort not found")
+
+				val relay = SerialRelay(port)
+
+				val bytes = call.receive<ByteArray>()
+				println("Relaying ${bytes.size} bytes...")
+				val writtenBytes = relay.relayMessage(bytes.toUByteArray())
+				println("Relayed $writtenBytes bytes!")
+
+				if (writtenBytes == bytes.size) {
+					call.respond(HttpStatusCode.NoContent)
 				} else {
-					ctx.result("Couldn't write all bytes. Only $writtenBytes of ${bytes.size} bytes were written.")
+					call.respondText(
+						when (writtenBytes) {
+							-1 -> "Couldn't write anything. Are the permissions correct?"
+							else -> "Couldn't write all bytes. Only $writtenBytes of ${bytes.size} bytes were written."
+						},
+						status = HttpStatusCode.InternalServerError
+					)
 				}
 			}
-		}.start(7070)
+		}
+	}).start(wait = true)
 }

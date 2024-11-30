@@ -5,7 +5,9 @@ plugins {
 }
 
 dependencies {
-    implementation("io.javalin:javalin:5.6.3")
+    val ktorVersion = "3.0.1"
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-cio:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation(project(":protocol"))
     implementation(project(":relay"))
