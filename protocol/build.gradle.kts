@@ -1,13 +1,6 @@
 plugins {
-	kotlin("jvm") version "1.9.21"
+	kotlin("jvm")
 	`maven-publish`
-}
-
-group = "com.github.simulatan.matrixcontrol"
-version = "1.1.0"
-
-repositories {
-	mavenCentral()
 }
 
 dependencies {
@@ -17,11 +10,6 @@ dependencies {
 tasks.test {
 	useJUnitPlatform()
 }
-
-kotlin {
-	jvmToolchain(17)
-}
-
 
 publishing {
 	publications.create<MavenPublication>("mavenJava") {

@@ -12,10 +12,6 @@ repositories {
 	mavenCentral()
 }
 
-kotlin {
-	jvmToolchain(17)
-}
-
 subprojects {
 	tasks.withType<KotlinCompilationTask<*>>().configureEach {
 		compilerOptions.freeCompilerArgs.add("-opt-in=kotlin.ExperimentalUnsignedTypes,kotlin.ExperimentalStdlibApi")
