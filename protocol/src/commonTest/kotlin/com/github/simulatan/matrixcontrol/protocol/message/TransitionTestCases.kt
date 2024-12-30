@@ -8,7 +8,7 @@ import kotlin.test.assertContentEquals
 
 class TransitionTestCases {
 	@Test
-	fun `#7 two lines same transition`() {
+	fun `7 two lines same transition`() {
 		val message = MessageBuilder(
 			TransitionMessagePart.PAC_MAN,
 			PlainTextMessagePart("First Line"),
@@ -24,7 +24,7 @@ class TransitionTestCases {
 	}
 
 	@Test
-	fun `#9 three lines pac man`() {
+	fun `9 three lines pac man`() {
 		val message = MessageBuilder(
 			TransitionMessagePart.PAC_MAN,
 			PlainTextMessagePart("First Line"),

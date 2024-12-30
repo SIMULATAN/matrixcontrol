@@ -1,12 +1,12 @@
 package com.github.simulatan.matrixcontrol.protocol.message
 
 import com.github.simulatan.matrixcontrol.protocol.message.parts.PlainTextMessagePart
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
 class SimpleTestCases {
 	@Test
-	fun `#1 single line`() {
+	fun `1 single line`() {
 		val message = MessageBuilder(
 			PlainTextMessagePart("HALLO")
 		).build()
@@ -18,7 +18,7 @@ class SimpleTestCases {
 	}
 
 	@Test
-	fun `#2 single line`() {
+	fun `2 single line`() {
 		val message = MessageBuilder(
 			PlainTextMessagePart("TEST")
 		).build()

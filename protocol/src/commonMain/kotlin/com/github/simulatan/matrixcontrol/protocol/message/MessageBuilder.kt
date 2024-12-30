@@ -4,7 +4,6 @@ import com.github.simulatan.matrixcontrol.protocol.message.parts.NewlineMessageP
 import com.github.simulatan.matrixcontrol.protocol.message.parts.TransitionMessagePart
 import com.github.simulatan.matrixcontrol.protocol.util.hexToBytes
 import com.github.simulatan.matrixcontrol.protocol.util.plus
-import java.util.*
 
 private val START_OF_LINE = "EF B0 EF A2".hexToBytes()
 private const val MESSAGE_TERMINATOR: UByte = 255u
@@ -13,11 +12,11 @@ class MessageBuilder {
 	private val parts: MutableList<MessagePart>
 
 	constructor() {
-		parts = LinkedList()
+		parts = mutableListOf()
 	}
 
 	constructor(messages: Collection<MessagePart>) {
-		parts = LinkedList(messages)
+		parts = messages.toMutableList()
 	}
 
 	constructor(vararg messages: MessagePart): this(messages.toList())
@@ -33,6 +32,11 @@ class MessageBuilder {
 
 	fun add(messageParts: Collection<MessagePart>): MessageBuilder {
 		parts += messageParts
+		return this
+	}
+
+	fun add(messageBuilder: MessageBuilder): MessageBuilder {
+		parts += messageBuilder.parts
 		return this
 	}
 

@@ -1,7 +1,6 @@
 package com.github.simulatan.matrixcontrol.protocol.message.parts
 
 import com.github.simulatan.matrixcontrol.protocol.message.MessagePart
-import java.util.*
 
 enum class TransitionMessagePart : MessagePart {
 	ZYKLISCH,
@@ -39,12 +38,12 @@ enum class TransitionMessagePart : MessagePart {
 
 	constructor() {
 		this.fancyName = name
-			.lowercase(Locale.ROOT)
+			.lowercase()
 			.replace("_", " ")
 			.replace("ue", "ü")
 			.replace("ae", "ä")
 			.replace("oe", "ö")
-			.replaceFirstChar { it.uppercase(Locale.ROOT) }
+			.replaceFirstChar { it.uppercase() }
 	}
 
 	constructor(fancyName: String) {

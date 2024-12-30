@@ -7,7 +7,7 @@ import kotlin.test.assertContentEquals
 
 class MultiLineTestCases {
 	@Test
-	fun `#6 two lines`() {
+	fun `6 two lines`() {
 		val message = MessageBuilder(
 			PlainTextMessagePart("First Line"),
 			NewlineMessagePart,
@@ -21,7 +21,7 @@ class MultiLineTestCases {
 	}
 
 	@Test
-	fun `#8 three lines`() {
+	fun `8 three lines`() {
 		val message = MessageBuilder(
 			PlainTextMessagePart("First Line"),
 			NewlineMessagePart,
