@@ -45,7 +45,8 @@ class FeuerwehrOoeModule(private val config: FeuerwehrOoeConfig) : Module() {
 
 	@Serializable
 	data class EinsaetzeResponse(
-		val einsaetze: Map<String, EinsatzWrapper>,
+		// is null when no einsaetze are present
+		val einsaetze: Map<String, EinsatzWrapper>? = null,
 		@SerialName("cnt_einsaetze")
 		val einsatzeNr: Int,
 	)
@@ -74,8 +75,9 @@ class FeuerwehrOoeModule(private val config: FeuerwehrOoeConfig) : Module() {
 			.body<EinsaetzeResponse>()
 
 		var einsaetze = response.einsaetze
-			.values
-			.map(EinsatzWrapper::einsatz)
+			?.values
+			?.map(EinsatzWrapper::einsatz)
+			.orEmpty()
 
 		val text = when (val display = config.displayType) {
 			FeuerwehrOoeDisplayType.Count -> "B ${response.einsatzeNr} Einsaetze"
