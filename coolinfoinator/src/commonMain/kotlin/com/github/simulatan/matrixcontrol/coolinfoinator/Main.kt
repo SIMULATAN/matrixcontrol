@@ -41,7 +41,14 @@ suspend fun runSendLoop(config: Config, modules: Collection<Module>, relay: Matr
 	while (true) {
 		println("Accumulating messages")
 		val message = modules
-			.map { it.contribute() }
+			.mapNotNull {
+				runCatching { it.contribute() }
+					.onFailure {
+						println("Error in module ${it.message}")
+						it.printStackTrace()
+					}
+					.getOrNull()
+			}
 			.reduce { acc, message -> acc.add(message) }
 
 		val protocol = ProtocolBuilder()
