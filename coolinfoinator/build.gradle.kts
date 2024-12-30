@@ -6,6 +6,7 @@ plugins {
 repositories {
 	mavenCentral()
 	mavenLocal()
+	maven("https://maven.simulatan.me/releases")
 }
 
 dependencies {
